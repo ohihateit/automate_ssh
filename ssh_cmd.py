@@ -3,7 +3,7 @@ import argparse
 
 
 def exec_command(connection, ip, cmd):
-    """Executes command on the server"""
+    """Executes commands on the server"""
 
     _, stdout, stderr = connection.exec_command(cmd)
 
