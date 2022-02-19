@@ -1,8 +1,11 @@
 import paramiko
+import argparse
 
 
-def exec_command(connect, ip, cmd):
-    _, stdout, stderr = connect.exec_command(cmd)
+def exec_command(connection, ip, cmd):
+    """Executes command on the server"""
+
+    _, stdout, stderr = connection.exec_command(cmd)
 
     output = stdout.readlines() + stderr.readlines()
 
@@ -13,27 +16,38 @@ def exec_command(connect, ip, cmd):
 
 
 def connect():
+    """Connects to the server"""
+
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    # Hosts file format: ip:username:password
-    with open("hosts.txt", "r") as file:
+    with open(args.hosts_file, "r") as file:
         for line in file:
             host_info = line.split(":")
-            
+
             if len(host_info) == 3:
                 client.connect(
                     hostname=host_info[0], port=22, username=host_info[1], password=host_info[2].rstrip('\n')
                 )
             if len(host_info) == 4:
                 client.connect(
-                    hostname=host_info[0], port=host_info[1], username=host_info[2], password=host_info[3].rstrip('\n')
+                    hostname=host_info[0], port=int(host_info[1]), username=host_info[2],
+                    password=host_info[3].rstrip('\n')
                 )
 
-            exec_command(client, host_info[0], "cat /etc/passwd; touch lol.txt; echo \"I love you!\" > lol.txt")
-
+            exec_command(client, host_info[0], args.cmd)
 
 
 if __name__ == "__main__":
-    # TODO: Add argparse
+    usage_example = """
+    Usage Example:
+        python3 ssh_cmd.py -hf hosts.txt -c whoami
+    """
+
+    parser = argparse.ArgumentParser(epilog=usage_example, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--hosts_file", "-hf", help="File with servers and credentials.\n"
+                                                    "Hosts file example: ip:username:password")
+    parser.add_argument("--cmd", "-c", help="Command that will be executed on the server")
+    args = parser.parse_args()
+
     connect()
