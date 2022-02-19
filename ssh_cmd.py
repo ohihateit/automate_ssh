@@ -28,7 +28,7 @@ def connect():
 
                 if len(host_info) == 3:
                     client.connect(
-                        hostname=host_info[0], port=22, username=host_info[1], password=host_info[2].rstrip('\n')
+                        hostname=host_info[0], port=args.port, username=host_info[1], password=host_info[2].rstrip('\n')
                     )
                 if len(host_info) == 4:
                     client.connect(
@@ -36,10 +36,12 @@ def connect():
                         password=host_info[3].rstrip('\n')
                     )
 
+                # TODO: Здесь нужно возвращать через yield коннект к серверу и выполнять некоторые действия
+                #  в другой функции, которые хочет пользователь, например запустить команду.
                 exec_command(client, host_info[0], args.cmd)
     else:
         client.connect(
-            hostname=args.ip, port=22, username=args.username, password=args.password.rstrip('\n')
+            hostname=args.ip, port=args.port, username=args.username, password=args.password.rstrip('\n')
         )
 
         exec_command(client, args.ip, args.cmd)
@@ -57,6 +59,7 @@ if __name__ == "__main__":
                                                     "Hosts file example: ip:username:password")
     parser.add_argument("--cmd", "-c", help="Command that will be executed on the server")
     parser.add_argument("--ip", "-i", help="Server IP")
+    parser.add_argument("--port", help="SSH Port", default=22)
 
     args, _ = parser.parse_known_args()
 
