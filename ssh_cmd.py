@@ -3,7 +3,7 @@ import paramiko
 import argparse
 
 
-def exec_command(connection, ip, cmd):
+def exec_command(client):
     """Executes commands on the server"""
 
     _, stdout, stderr = client.exec_command(args.cmd)
