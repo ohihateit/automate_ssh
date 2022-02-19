@@ -3,10 +3,6 @@ import paramiko
 import argparse
 
 
-def main():
-    pass
-
-
 def exec_command(client):
     """Executes command on the server"""
 
