@@ -11,15 +11,18 @@ def exec_command(client):
     output = stdout.readlines() + stderr.readlines()
 
     if output:
-        print(f"Output")
+        print(f"OUTPUT:")
         for line in output:
             print(line)
 
 
 def upload_file(client):
+    """Uploads the file to the server"""
+
     sftp_client = client.open_sftp()
     sftp_client.put(localpath=args.file, remotepath=args.file)
     sftp_client.close()
+    print("File uploaded")
 
 
 def connect():
@@ -43,12 +46,14 @@ def connect():
                         password=host_info[3].rstrip('\n')
                     )
 
+                print(f"Connected to {host_info[0]}")
                 yield client
     else:
         client.connect(
             hostname=args.ip, port=args.port, username=args.username, password=args.password.rstrip('\n')
         )
 
+        print(f"Connected to {args.ip}")
         yield client
 
 
@@ -92,5 +97,3 @@ if __name__ == "__main__":
         if isinstance(ssh_connection, types.GeneratorType):
             for connection in ssh_connection:
                 upload_file(client=connection)
-
-
