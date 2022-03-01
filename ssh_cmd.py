@@ -2,9 +2,14 @@ import types
 import paramiko
 import argparse
 
+from paramiko.client import SSHClient
 
-def exec_command(client):
-    """Executes commands on the server"""
+
+def exec_command(client: SSHClient):
+    """
+    Executes commands on the server
+    :param client: SSH Connection Object
+    """
 
     _, stdout, stderr = client.exec_command(args.cmd)
 
@@ -16,8 +21,11 @@ def exec_command(client):
             print(line)
 
 
-def upload_file(client):
-    """Uploads the file to the server"""
+def upload_file(client: SSHClient):
+    """
+    Uploads the file to the server
+    :param client: SSH Connection Object
+    """
 
     sftp_client = client.open_sftp()
     sftp_client.put(localpath=args.file, remotepath=args.file)
@@ -36,11 +44,11 @@ def connect():
             for line in file:
                 host_info = line.split(":")
 
-                if len(host_info) == 3:
+                if len(host_info) == 3:  # If port isn't specified
                     client.connect(
                         hostname=host_info[0], port=args.port, username=host_info[1], password=host_info[2].rstrip('\n')
                     )
-                if len(host_info) == 4:
+                if len(host_info) == 4:  # If port isn't specified
                     client.connect(
                         hostname=host_info[0], port=int(host_info[1]), username=host_info[2],
                         password=host_info[3].rstrip('\n')
