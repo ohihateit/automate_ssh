@@ -35,6 +35,11 @@ def upload_file(client: SSHClient):
 
 
 def download_file(client: SSHClient, file_number: int):
+    """
+    Downloads the file from the server
+    :param client: SSH Connection Object
+    :param file_number: File number
+    """
     sftp_client = client.open_sftp()
 
     try:
